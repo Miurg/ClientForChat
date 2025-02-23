@@ -10,7 +10,7 @@ using Windows.Services.Maps;
 
 namespace ClientForChat.Data
 {
-    class UsersDatabaseService
+    public class UsersDatabaseService
     {
         private readonly string _connectionString = "Data Source=app.db;Version=3;";
         private readonly ApiService _apiService = new ApiService();

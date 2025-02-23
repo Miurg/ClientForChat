@@ -1,13 +1,12 @@
-﻿using ClientForChat.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClientForChat.VIewModels
+namespace ClientForChat.Models
 {
-    public class MessageViewModel
+    public class MessageLocalModel
     {
         public int Id { get; set; }
         public string Content { get; set; }

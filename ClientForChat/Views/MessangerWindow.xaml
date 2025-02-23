@@ -50,7 +50,7 @@
         <!-- Ввод сообщения -->
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <TextBox Text="{Binding NewMessage,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="300"/>
-            <Button Content="Отправить" Click="SendMessage_Click"/>
+            <Button Content="Send" Command="{Binding SendMessageCommand}" />
         </StackPanel>
     </Grid>
 </Window>
