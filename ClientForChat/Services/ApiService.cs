@@ -41,7 +41,7 @@ namespace ClientForChat.Services
             using (var _httpClient = new HttpClient(_handler))
             try
             {
-                HttpResponseMessage response = await _httpClient.PostAsync("https://localhost:7168/api/auth/login", content);
+                HttpResponseMessage response = await _httpClient.PostAsync("https://26.74.71.132:7168/api/auth/login", content);
                 if (response.IsSuccessStatusCode)
                 {
                     var responseJson = await response.Content.ReadAsStringAsync();
@@ -72,7 +72,7 @@ namespace ClientForChat.Services
             try
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
-                HttpResponseMessage response = await _httpClient.GetAsync($"https://localhost:7168/api/users/{userId}");
+                HttpResponseMessage response = await _httpClient.GetAsync($"https://26.74.71.132:7168/api/users/{userId}");
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();

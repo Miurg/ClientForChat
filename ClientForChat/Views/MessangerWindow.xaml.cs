@@ -31,7 +31,17 @@ namespace ClientForChat.Views
             var usersService = new UsersDatabaseService();
             var messagesService = new MessagesService(usersService);
             var selfUserDatabaseService = new SelfUserDatabaseService();
-            DataContext = new MessangerViewModel(messagesService, selfUserDatabaseService);
+            var messagesdatabase = new MessagesDatabaseService();
+            var tokenService = new TokenService();
+            DataContext = new MessangerViewModel(messagesService, selfUserDatabaseService, messagesdatabase, tokenService);
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Send.Command.Execute("SendMessageCommand");
+            }
         }
     }
 }

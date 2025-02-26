@@ -17,13 +17,10 @@ namespace ClientForChat.Data
 
         public UsersDatabaseService()
         {
-            // Создание базы данных, если она не существует
             if (!System.IO.File.Exists("app.db"))
             {
                 SQLiteConnection.CreateFile("app.db");
             }
-
-            // Создание таблицы для пользователей, если её нет
             using (var connection = new SQLiteConnection(_connectionString))
             {
                 connection.Open();
