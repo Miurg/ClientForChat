@@ -16,7 +16,8 @@
 
         <ListBox ItemsSource="{Binding Messages}" BorderThickness="0" Background="Transparent" 
          Name="MessagesList"
-         ScrollViewer.VerticalScrollBarVisibility="Auto">
+         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                 ScrollViewer.ScrollChanged="MessagesList_ScrollChanged">
 
             <!-- Отображение элементов снизу вверх -->
             <ListBox.ItemsPanel>

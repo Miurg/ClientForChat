@@ -20,12 +20,13 @@ namespace ClientForChat.Services
     {
         private readonly TokenService _tokenService = new TokenService();
         private readonly HttpClientHandler _handler;
-
+        private readonly HttpClient _httpClient;
         public ApiService()
         {
             _handler = new HttpClientHandler();
             _handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, SslPolicyErrors) => true;
             TimeSpan.FromSeconds(10);
+            _httpClient = new HttpClient(_handler);
         }
 
         public async Task<bool> LoginAsync(string username, string password)
@@ -38,7 +39,6 @@ namespace ClientForChat.Services
 
             var json = JsonConvert.SerializeObject(loginRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            using (var _httpClient = new HttpClient(_handler))
             try
             {
                 HttpResponseMessage response = await _httpClient.PostAsync("https://26.74.71.132:7168/api/auth/login", content);
@@ -68,7 +68,6 @@ namespace ClientForChat.Services
         }
         public async Task<UserModel> FetchUserAsync(int userId)
         {
-            using (var _httpClient = new HttpClient(_handler))
             try
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());
@@ -99,7 +98,6 @@ namespace ClientForChat.Services
 
         public async Task<List<MessageModel>> FetchMessagesAsync(int offset, int limit)
         {
-            using (var _httpClient = new HttpClient(_handler))
             try
             {
                 _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.GetToken());

@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Windows.System;
 using ClientForChat.Data;
 using System.Net.Http;
+using System.Windows.Controls;
+using System.Diagnostics;
 
 namespace ClientForChat.VIewModels
 {
@@ -36,7 +38,25 @@ namespace ClientForChat.VIewModels
             }
         }
 
+        private bool _isLoading;
+
+        public bool IsLoading 
+        {
+            get => _isLoading;
+            set
+            {
+                if (_isLoading != value)
+                {
+                    _isLoading = value;
+                    OnPropertyChanged(nameof(IsLoading));
+                }
+            }
+        }
+        private int _loadedMessagesCount = 0;
+        private const int PageSize = 20; 
         public ICommand SendMessageCommand { get; }
+
+        public ICommand LoadOlderMessagesCommand { get; }
 
         public MessangerViewModel(MessagesService messagesService,
             SelfUserDatabaseService selfUserDatabaseService,
@@ -48,6 +68,7 @@ namespace ClientForChat.VIewModels
             _messagesDatabaseService = messagesDatabaseService;
             _tokenService = tokenService;
             SendMessageCommand = new RelayCommand(async () => await SendMessage(), () => !string.IsNullOrWhiteSpace(NewMessage));
+            LoadOlderMessagesCommand = new RelayCommand(LoadOlderMessages, () => !_isLoading);
             var handler = new HttpClientHandler(); 
             handler.ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true; //ONLY FOR DEVELOPMENT 
 
@@ -76,6 +97,7 @@ namespace ClientForChat.VIewModels
                 });
             });
             _ = ConnectToHub();
+
         }
         private async Task ConnectToHub()
         {
@@ -101,6 +123,35 @@ namespace ClientForChat.VIewModels
             await _hubConnection.InvokeAsync("SendMessage", newMessage);
             //Messages.Add(message);
             NewMessage = "";
+        }
+
+        public async Task LoadOlderMessages()
+        {
+            if (_isLoading) return;
+            _isLoading = true;
+
+            var olderMessages = await _messagesDatabaseService.GetMessagesAsync(_loadedMessagesCount, PageSize);
+            if (olderMessages.Count == 0)
+            {
+                _isLoading = false;
+                return;
+            }
+
+            int prevHeight = Messages.Count;
+            List<MessageLocalModel> messages = new List<MessageLocalModel>();
+            foreach (MessageModel message in olderMessages)
+            {
+                messages.Add(await _messagesService.MessageToLocalMessageAsync(message));
+            }
+
+            for (int i = messages.Count - 1; i >= 0; i--) // Вставляем в начало
+                Messages.Insert(0, messages[i]);
+
+            _loadedMessagesCount += olderMessages.Count;
+
+            _isLoading = false;
+            
+            OnPropertyChanged(nameof(LoadOlderMessagesCommand));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

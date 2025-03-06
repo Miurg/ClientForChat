@@ -61,7 +61,11 @@ namespace ClientForChat.Data
         // Получение сообщений постранично
         public async Task<List<MessageModel>> GetMessagesAsync(int offset, int limit)
         {
-            SaveMessagesAsync(await _apiService.FetchMessagesAsync(offset, limit));
+            var messagesToFetch = await _apiService.FetchMessagesAsync(offset, limit);
+            if (messagesToFetch != null)
+            {
+                SaveMessages(messagesToFetch);
+            }
             var messages = new List<MessageModel>();
 
             using (var connection = new SQLiteConnection(_connectionString))
@@ -93,10 +97,11 @@ namespace ClientForChat.Data
                     }
                 }
             }
+            messages.Reverse();
             return messages;
         }
 
-        public void SaveMessagesAsync(List<MessageModel> messages)
+        public void SaveMessages(List<MessageModel> messages)
         {
             using (var connection = new SQLiteConnection(_connectionString))
             {
