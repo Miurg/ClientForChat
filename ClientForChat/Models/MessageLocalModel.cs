@@ -12,5 +12,6 @@ namespace ClientForChat.Models
         public string Content { get; set; }
         public string Username { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool IsFromCurrentUser { get; set; }
     }
 }

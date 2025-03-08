@@ -5,21 +5,23 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClientForChat.Views"
         mc:Ignorable="d"
-        Title="MessangerWindow" Height="450" Width="800">
+        Title="MessangerWindow" Height="900" Width="800"
+        FontFamily="Noto Color Emoji">
+        <Window.Resources>
+            <local:BoolToVisibilityForCurrentUserConverter x:Key="BoolToVisibilityForCurrentUserConverter"/>
+            <local:BoolToVisibilityForOtherUserConverter x:Key="BoolToVisibilityForOtherUserConverter"/>
+            <local:ListBoxWidthConverter x:Key="ListBoxWidthConverter"/>
+        </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <!-- Список сообщений -->
             <RowDefinition Height="Auto" />
-            <!-- Поле ввода и кнопка -->
         </Grid.RowDefinitions>
 
         <ListBox ItemsSource="{Binding Messages}" BorderThickness="0" Background="Transparent" 
          Name="MessagesList"
          ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 ScrollViewer.ScrollChanged="MessagesList_ScrollChanged">
-
-            <!-- Отображение элементов снизу вверх -->
+         ScrollViewer.ScrollChanged="MessagesList_ScrollChanged">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel/>
@@ -28,30 +30,79 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Grid>
+                    <Grid Width="{Binding ActualWidth, ElementName=MessagesList, Converter={StaticResource ListBoxWidthConverter}}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <!-- Чужое сообщение -->
-                        <Border Grid.Column="0" Background="#ddd" Padding="10" CornerRadius="10">
-                            <TextBlock Text="{Binding Username}" Foreground="Black"/>
-                        </Border>
+                        <WrapPanel Grid.Column="0" HorizontalAlignment="Left">
+                            <Border Grid.Column="0" Background="#4CAF50" Padding="10" CornerRadius="10" 
+                                    Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForOtherUserConverter}}">
+                                <TextBlock Text="{Binding Username}"
+                                            Foreground="Black" 
+                                            TextWrapping="Wrap" 
+                                            Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForOtherUserConverter}}">
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
+                        
 
-                        <!-- Моё сообщение -->
-                        <Border Grid.Column="1" Background="#4CAF50" Padding="10" CornerRadius="10">
-                            <TextBlock Text="{Binding Content}" Foreground="Black"/>
-                        </Border>
+                        <WrapPanel Grid.Column="1" HorizontalAlignment="Left">
+                            <Border Background="#ddd" Padding="10" CornerRadius="10" 
+                                Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForOtherUserConverter}}">
+                                <TextBlock Text="{Binding Content}" 
+                                           Foreground="Black" 
+                                           TextWrapping="Wrap" 
+                                           Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForOtherUserConverter}}">
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
+                        
+
+                        <WrapPanel Grid.Column="2" HorizontalAlignment="Right">
+                            <Border Background="#ddd" Padding="10" CornerRadius="10"
+                                Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForCurrentUserConverter}}">
+                                <TextBlock Text="{Binding Content}" 
+                                       Foreground="Black" 
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Right"
+                                       Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForCurrentUserConverter}}">
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
+
+
+                        <WrapPanel Grid.Column="3" HorizontalAlignment="Right">
+                            <Border Background="#4CAF50" Padding="10" CornerRadius="10" 
+                                    Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForCurrentUserConverter}}">
+                                <TextBlock Text="{Binding Username}" 
+                                            Foreground="Black" 
+                                            TextWrapping="Wrap"
+                                            TextAlignment="Right"
+                                            Visibility="{Binding IsFromCurrentUser, Converter={StaticResource BoolToVisibilityForCurrentUserConverter}}">
+                                </TextBlock>
+                            </Border>
+                        </WrapPanel>
+                        
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <!-- Ввод сообщения -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBox Text="{Binding NewMessage,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" KeyDown="TextBox_KeyDown" Width="300"/>
-            <Button Content="Send" Command="{Binding SendMessageCommand}" Name="Send" />
-        </StackPanel>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Text="{Binding NewMessage,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     KeyDown="TextBox_KeyDown" 
+                     Height="50"
+                     TextWrapping="Wrap"
+                     Grid.Column="0"/>
+            <Button Content="Send" Command="{Binding SendMessageCommand}" Name="Send" Grid.Column="1" Width="100"/>
+        </Grid>
     </Grid>
 </Window>

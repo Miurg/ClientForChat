@@ -31,7 +31,8 @@ namespace ClientForChat.Views
         {
             InitializeComponent();
             var usersService = new UsersDatabaseService();
-            var messagesService = new MessagesService(usersService);
+            var selfUserService = new SelfUserDatabaseService();
+            var messagesService = new MessagesService(usersService, selfUserService);
             var selfUserDatabaseService = new SelfUserDatabaseService();
             var messagesdatabase = new MessagesDatabaseService();
             var tokenService = new TokenService();
@@ -88,7 +89,6 @@ namespace ClientForChat.Views
                     if (e.PropertyName == "LoadOlderMessagesCommand")
                     {
                         alreadyHaveItem = false;
-                        Debug.WriteLine("Yep");
                     }
                 };
                 isSubscribed = true;

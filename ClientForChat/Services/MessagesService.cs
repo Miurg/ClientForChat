@@ -14,16 +14,20 @@ namespace ClientForChat.Services
     public class MessagesService
     {
         private readonly UsersDatabaseService _usersDatabaseService;
+        private readonly SelfUserDatabaseService _selfuserDatabaseService;
 
-        public MessagesService(UsersDatabaseService usersDatabaseService)
+        public MessagesService(UsersDatabaseService usersDatabaseService, SelfUserDatabaseService selfuserDatabaseService)
         {
             _usersDatabaseService = usersDatabaseService;
+            _selfuserDatabaseService = selfuserDatabaseService;
         }
 
         public async Task<MessageLocalModel> MessageToLocalMessageAsync(MessageModel message)
         {
             var username = await _usersDatabaseService.GetOrFetchUser(message.UserID);
-            return new MessageLocalModel { Username = username.Username, Content = message.Content };
+            return new MessageLocalModel { Username = username.Username, 
+                Content = message.Content, 
+                IsFromCurrentUser = username.Username==_selfuserDatabaseService.GetLastSelfUser()};
         }
     }
 }

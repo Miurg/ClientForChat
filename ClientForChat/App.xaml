@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:ClientForChat"
              StartupUri="Views/LoginWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>
