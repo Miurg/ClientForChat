@@ -1,0 +1,2 @@
+ABANDONED
+See "ClientForChatOnAvalonia" instead
